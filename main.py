@@ -1,28 +1,23 @@
 import pandas as pd
-from model.train_model import train_model
 import joblib
+import json
+from model.train_model import train_model
 
-# 1. Обучение модели (если не обучена)
 model = train_model()
 
-# 2. Загрузка сигналов
 df = pd.read_csv("data/sample_strategy.csv")
 
-# 3. Подготовка признаков
-features = df.select_dtypes(include=["number"])  # замените на актуальные названия
+# Загружаем признаки, на которых обучалась модель
+with open("model/feature_columns.json", "r") as f:
+    feature_columns = json.load(f)
 
-# 4. Фильтрация
+features = df[feature_columns]
 predictions = model.predict(features)
 
-# 5. Добавим колонку с результатом
-df['filtered'] = predictions
+df["filtered"] = predictions
+filtered = df[df["filtered"] == 1]
 
-# 6. Оставим только полезные сигналы
-filtered_signals = df[df['filtered'] == 1]
+print("✅ Фильтрованные сигналы:")
+print(filtered[["timestamp", "symbol", "entry_price", "exit_price", "result"]])
 
-# 7. Вывод результата
-print("✅ Отфильтрованные сигналы:")
-print(filtered_signals)
-
-# 8. (опционально) Сохраняем
-filtered_signals.to_csv("data/filtered_signals.csv", index=False)
+filtered.to_csv("data/filtered_signals.csv", index=False)
