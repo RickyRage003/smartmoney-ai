@@ -6,10 +6,7 @@ from model.train_model import train_model
 EXCLUDE = ['filtered_signals.csv', 'filter_chart.png']
 
 # 1. Обучение на sample_strategy.csv
-base_df = pd.read_csv("data/sample_strategy.csv")
-y = base_df["result"]
-X = base_df.select_dtypes(include=["number"]).drop(columns=["result"])
-model = train_model(X, y, base_df)[0]
+model = train_model()
 
 # 2. Проходим по всем CSV в data/
 for file in os.listdir("data"):
