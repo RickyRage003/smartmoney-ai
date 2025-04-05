@@ -1,8 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
+import asyncio
 from model.train_model import train_model
 from telegram_bot import send_telegram_report
-import os
 
 # Загрузка данных
 file_path = 'data/sample_strategy.csv'
@@ -18,8 +19,13 @@ print(f"\n✅ Фильтрованные сигналы:")
 print(filtered)
 print(f"Accuracy: {accuracy:.4f}")
 
+# Создаём копию, чтобы избежать предупреждений
+filtered = filtered.copy()
+
 # Сохраняем отфильтрованные сигналы
-filtered.to_csv('data/filtered_signals.csv', index=False)
+filtered_path = 'data/filtered_signals.csv'
+chart_path = 'data/filter_chart.png'
+filtered.to_csv(filtered_path, index=False)
 print("✅ Сохранён файл: filtered_signals.csv")
 
 # Строим график PnL
@@ -33,7 +39,7 @@ plt.xlabel('Timestamp')
 plt.ylabel('PnL')
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.savefig('data/filter_chart.png')
+plt.savefig(chart_path)
 plt.close()
 print("✅ Сохранён график: filter_chart.png")
 
@@ -42,10 +48,4 @@ print("\n📂 Содержимое папки /data:")
 print(os.listdir("data"))
 
 # Отправляем Telegram-отчёт
-from telegram_bot import send_telegram_report
-import asyncio
-
-...
-
-# Отправка отчета в Telegram
 asyncio.run(send_telegram_report(filtered_path, chart_path, accuracy))
