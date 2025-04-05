@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from model.train_model import train_model
 from telegram_bot import send_telegram_report
+import os
 
 # Загрузка данных
 file_path = 'data/sample_strategy.csv'
@@ -19,6 +20,7 @@ print(f"Accuracy: {accuracy:.4f}")
 
 # Сохраняем отфильтрованные сигналы
 filtered.to_csv('data/filtered_signals.csv', index=False)
+print("✅ Сохранён файл: filtered_signals.csv")
 
 # Строим график PnL
 filtered['pnl'] = filtered['exit_price'] - filtered['entry_price']
@@ -33,6 +35,11 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.savefig('data/filter_chart.png')
 plt.close()
+print("✅ Сохранён график: filter_chart.png")
+
+# Проверка содержимого папки data
+print("\n📂 Содержимое папки /data:")
+print(os.listdir("data"))
 
 # Отправляем Telegram-отчёт
 send_telegram_report()
