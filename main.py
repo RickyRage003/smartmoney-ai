@@ -1,21 +1,26 @@
 import pandas as pd
 from model.train_model import train_model
 
-# Загрузка данных
-df = pd.read_csv('data/sample_strategy.csv')
-
 # Обучаем модель
-model, accuracy = train_model()
+model = train_model()
 
-# Определяем признаки (автоматически, кроме excluded)
-exclude_cols = ['timestamp', 'symbol', 'entry_price', 'exit_price', 'result']
-feature_cols = [col for col in df.columns if col not in exclude_cols]
+# Загружаем данные
+df = pd.read_csv("data/sample_strategy.csv")
 
-# Предсказываем
-filtered = df.copy()
-filtered['prediction'] = model.predict(df[feature_cols])
-filtered = filtered[filtered['prediction'] == 1]
+# Колонки, которые не используются как признаки
+exclude = ["timestamp", "symbol", "entry_price", "exit_price", "result"]
+feature_columns = [col for col in df.columns if col not in exclude]
 
-print("✅ Фильтрованные сигналы:")
-print(filtered[['timestamp', 'symbol', 'entry_price', 'exit_price', 'result']])
-print("🎯 Accuracy:", round(accuracy, 4))
+# Извлекаем признаки
+X = df[feature_columns]
+
+# Предсказания
+df["prediction"] = model.predict(X)
+filtered = df[df["prediction"] == 1]
+
+# Вывод результатов
+print("✅ Оставлены сигналы:")
+print(filtered[["timestamp", "symbol", "entry_price", "exit_price", "result"]])
+
+# Сохраняем
+filtered.to_csv("data/filtered_signals.csv", index=False)
