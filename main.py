@@ -42,4 +42,10 @@ print("\n📂 Содержимое папки /data:")
 print(os.listdir("data"))
 
 # Отправляем Telegram-отчёт
-send_telegram_report()
+from telegram_bot import send_telegram_report
+import asyncio
+
+...
+
+# Отправка отчета в Telegram
+asyncio.run(send_telegram_report(filtered_path, chart_path, accuracy))
