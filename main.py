@@ -9,7 +9,7 @@ model = train_model()
 df = pd.read_csv("data/sample_strategy.csv")
 
 # 3. Подготовка признаков
-features = df[['feature1', 'feature2', 'feature3']]  # замените на актуальные названия
+features = df.select_dtypes(include=["number"])  # замените на актуальные названия
 
 # 4. Фильтрация
 predictions = model.predict(features)
